@@ -46,7 +46,7 @@ export default async function EmbedPage() {
     getCandidateTopics(),
   ])
 
-  const baseUrl = process.env.NEXTAUTH_URL ?? 'https://ai-1999-cyber.vercel.app'
+  const baseUrl = process.env.NEXTAUTH_URL ?? 'https://1999.twman.org'
 
   return (
     <EmbedView
