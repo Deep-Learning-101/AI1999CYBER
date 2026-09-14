@@ -1,0 +1,32 @@
+# 依賴套件
+node_modules/
+.pnp
+.pnp.js
+
+# 環境變數與憑證 (最重要，絕對不能進版控！)
+.env
+.env*.local
+.env.production
+
+# 建置產出
+.next/
+out/
+build/
+dist/
+
+# 日誌與本機資料庫
+npm-debug.log*
+yarn-debug.log*
+*.sqlite
+*.sqlite3
+
+# 編輯器暫存
+.vscode/
+.idea/
+.DS_Store
+
+# 建置快取
+tsconfig.tsbuildinfo
+
+# Jupyter 暫存
+.ipynb_checkpoints/

@@ -1,0 +1,86 @@
+// 社群議題媒合與工單追蹤系統 - Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 申請者模型（個資欄位僅後台與本人可見）
+model Participant {
+  id           String   @id @default(cuid())
+  // 公開欄位
+  nickname     String
+  // 個資欄位（隱私保護）
+  companyName  String
+  companyEmail String   @unique
+  // Magic Link 存取 Token（取代密碼登入）
+  accessToken  String   @unique @default(uuid()) @map("access_token")
+  topics       Topic[]
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("participants")
+}
+
+// 議題模型
+model Topic {
+  id            String      @id @default(cuid())
+  // 公開欄位
+  title         String      // 想討論的題目
+  summary       String      // 問題摘要
+  tags          String[]    // 標籤陣列
+  meetingDate    DateTime?   @map("meeting_date")    // 線上聚會日期
+  meetingUrl     String?     @map("meeting_url")    // 線上會議連結
+  isPublic           Boolean  @default(true)  @map("is_public")            // 開放社群成員參與
+  allowRecording     Boolean  @default(true)  @map("allow_recording")      // 同意錄影供觀看
+  preferredWeekdays  Int[]                    @map("preferred_weekdays")   // 偏好聚會日 1=週一…5=週五
+  status             TopicStatus @default(PENDING)
+  // 關聯
+  participantId String      @map("participant_id")
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  statusLogs    StatusLog[]
+  subscriptions TopicSubscription[]
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  @@map("topics")
+}
+
+// 候選議題訂閱（訪客留 email，排程後收通知）
+model TopicSubscription {
+  id        String   @id @default(cuid())
+  topicId   String   @map("topic_id")
+  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  email     String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([topicId, email])
+  @@map("topic_subscriptions")
+}
+
+// 議題進度狀態
+enum TopicStatus {
+  PENDING    // 等待審核
+  REVIEWING  // 審核中
+  APPROVED   // 已核准
+  SCHEDULED  // 已排入議程
+  COMPLETED  // 已完成
+  REJECTED   // 已拒絕
+}
+
+// 狀態變更歷程（稽核日誌）
+model StatusLog {
+  id         String      @id @default(cuid())
+  topicId    String      @map("topic_id")
+  topic      Topic       @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  fromStatus TopicStatus? @map("from_status")
+  toStatus   TopicStatus  @map("to_status")
+  note       String?     // 管理員備註
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  @@map("status_logs")
+}
