@@ -1,12 +1,17 @@
-# 社群議題媒合與工單追蹤系統 (Community Topic Tracker) - 開發指引
+# Deep Learning 101 線上預約平台 - 開發指引
 
-本專案為開源的社群聚會議題徵集與進度追蹤平台，支援 Docker 容器化部屬至 Hugging Face Spaces 與 GCP Cloud Run。
+**專案名稱**：Deep Learning 101 線上預約
+**主站網址**：https://deep-learning-101.github.io/
+**平台用途**：Deep Learning 101 社群的線上聚會議題徵集、審核與進度追蹤平台
+
+本專案為開源模板，其他社群可 fork 後自行部署使用。部署目標為 Vercel（主要）或 Docker（GCP Cloud Run）。
 
 ## 技術棧 (Tech Stack)
-- 前後端整合：Next.js (App Router, TypeScript) 或 FastAPI + React (Tailwind CSS, Lucide-react)
-- 資料庫與 ORM：PostgreSQL (Supabase / Neon), Prisma ORM
-- 容器化：Docker (Multi-stage build, 暴露 PORT 7860/8080)
-- 外部通知：Google Apps Script Webhook 或 Resend (寄送進度更新信件)
+- 前後端整合：Next.js 15 App Router (TypeScript)
+- 樣式：Tailwind CSS
+- 資料庫與 ORM：PostgreSQL (Supabase), Prisma ORM
+- 部署：Vercel（推薦）或 Docker（GCP Cloud Run）
+- 外部通知：Google Apps Script Webhook（寄送進度更新信件）
 
 ## 核心資料隱私與權限規則 (Security & Privacy)
 1. **個資隔離**：申請者的「真實姓名/公司/公司 Email」僅後台管理者與本人可見，公開首頁僅顯示「暱稱、題目摘要、標籤、進度狀態、線上會議日期與連結」。
@@ -17,6 +22,7 @@
 - 安裝套件：`npm install`
 - 本地開發：`npm run dev`
 - 資料庫遷移：`npx prisma db push` 或 `npx prisma migrate dev`
+- 部署到 Vercel：`vercel`（或透過 Vercel Dashboard 連結 GitHub repo 自動部署）
 - 本地 Docker 測試：`docker build -t app . && docker run -p 7860:7860 --env-file .env app`
 
 ## 程式碼撰寫風格 (Coding Guidelines)
