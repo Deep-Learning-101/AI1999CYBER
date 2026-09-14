@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-export function SubscribeButton({ topicId }: { topicId: string }) {
+export function SubscribeButton({ topicId, onSuccess }: { topicId: string; onSuccess?: () => void }) {
   const [open, setOpen]     = useState(false)
   const [email, setEmail]   = useState('')
   const [state, setState]   = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -22,6 +22,7 @@ export function SubscribeButton({ topicId }: { topicId: string }) {
 
     if (json.success) {
       setState('success')
+      onSuccess?.()
     } else {
       setState('error')
       setErrMsg(json.error ?? '訂閱失敗，請稍後再試')
